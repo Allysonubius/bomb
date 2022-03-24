@@ -346,7 +346,9 @@ def main():
                 if now - last["new_map"] > t['check_for_new_map_button']:
                     last["new_map"] = now
                     if clickBtn(images['new-map']):
-                        loggerMapClicked()
+                        loggerMapClicked();
+                if last in windows:
+                    last["window"].activate()
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
