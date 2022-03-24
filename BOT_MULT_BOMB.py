@@ -240,11 +240,13 @@ def goToHeroes():
 def goToGame():
     logger('ENVIANDO PARA O MAPA ...')
     clickBtn(images['x'])
+    time.sleep(10)
     clickBtn(images['treasure-hunt-icon'])
 
 def refreshHeroesPositions():
     logger('REINCIANDO POSIÇÔES DO HEROIS')
     clickBtn(images['go-back-arrow'])
+    time.sleep(10)
     clickBtn(images['treasure-hunt-icon'])
 
 def login():
@@ -336,11 +338,11 @@ def main():
         now = time.time()
         for last in windows:
             last["window"].activate()
-            if now - last["login"] > addRandomness(t['check_for_login'] * 120):
+            if now - last["login"] > addRandomness(t['check_for_login'] * 60):
                 sys.stdout.flush()
                 last["login"] = now
                 login()
-                if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 120):
+                if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
                     last["heroes"] = now
                     refreshHeroes()
                 if now - last["new_map"] > t['check_for_new_map_button']:
@@ -349,7 +351,9 @@ def main():
                         loggerMapClicked();
                 if last in windows:
                     last["window"].activate()
-                    time.sleep(5)
+            else:
+                pyautogui.hotkey('ctrl','f5')
+                logger('REFRESH PAGE ...')
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
