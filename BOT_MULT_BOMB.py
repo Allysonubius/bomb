@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-    
 from socket import timeout
 from cv2 import cv2
-from captcha.solveCaptcha import solveCaptcha
 from os import listdir
 from src.logger import logger, loggerMapClicked
 from random import randint
@@ -14,9 +13,9 @@ import time
 import sys
 import yaml
 
-cat = """ INICIANDO FARM ... """
+cat = """ INICIANDO FARM MULTI ACCOUNT  ... """
 
-print(cat)
+print('\n',cat,'\n')
 time.sleep(2)
 
 if __name__ == '__main__':
@@ -234,11 +233,9 @@ def goToHeroes():
     if clickBtn(images['go-back-arrow']):
         global login_attempts
         login_attempts = 0
-    solveCaptcha(pause)
     time.sleep(1)
     clickBtn(images['hero-icon'])
     time.sleep(1)
-    solveCaptcha(pause)
 
 def goToGame():
     logger('ENVIANDO PARA O MAPA ...')
@@ -255,7 +252,6 @@ def login():
     logger('VERIFICANDO SE A CONTA SE ENCONTRA DESCONECTADA ...')
     if clickBtn(images['connect-wallet'], name='connectWalletBtn', timeout = 10):
         logger('BOTÂO DA CARTEIRA ENCONTRADO, REALIANDO LOGIN ...')
-        solveCaptcha(pause)
         login_attempts = login_attempts + 1
         if login_attempts > 3:
             login_attempts = 0
@@ -264,8 +260,6 @@ def login():
     if clickBtn(images['connect-login-bomb'], timeout = 10):
         login_attempts = login_attempts + 1
         logger('CONECTANDO ...')
-    #if clickBtn(images['select-wallet-2'], name='signBtn', timeout = 20):
-    #    login_attempts = login_attempts + 1
         if clickBtn(images['treasure-hunt-icon'], name='teasureHunt', timeout=25):
             login_attempts = 0
             logger('INICIANDO MAPA ...')
@@ -322,12 +316,12 @@ def refreshHeroes():
         if buttonsClicked == 0:
             empty_scrolls_attempts = empty_scrolls_attempts - 1
         scroll()
-        time.sleep(2)
+        time.sleep(10)
     logger('{} HEROIS PARA O TRABALHO ...'.format(hero_clicks))
     goToGame()
 
 def main():
-    time.sleep(5)
+    time.sleep(10)
     t = c['time_intervals']
     windows = []
     for w in pygetwindow.getWindowsWithTitle('bombcrypto'):
@@ -336,35 +330,24 @@ def main():
             "login" : 0,
             "heroes" : 0,
             "new_map" : 0,
-            "check_for_captcha" : 0,
             "refresh_heroes" : 0
             })
     while True:
         now = time.time()
         for last in windows:
             last["window"].activate()
-            if now - last["login"] > addRandomness(t['check_for_login'] * 60):
+            if now - last["login"] > addRandomness(t['check_for_login'] * 120):
                 sys.stdout.flush()
                 last["login"] = now
                 login()
-                if now - last["check_for_captcha"] > addRandomness(t['check_for_captcha'] * 60):
-                    last["check_for_captcha"] = now
-                    solveCaptcha(pause)
-                if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
+                if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 120):
                     last["heroes"] = now
-                    refreshHeroes()
                 if now - last["new_map"] > t['check_for_new_map_button']:
                     last["new_map"] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked()
-                if now - last["refresh_heroes"] > addRandomness( t['refresh_heroes_positions'] * 60):
-                    solveCaptcha(pause)
-                    last["refresh_heroes"] = now
-                    refreshHeroesPositions() 
                 if last in windows:
                     last["window"].activate()
-            else:
-                pyautogui.hotkey('ctrl','f5')
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
