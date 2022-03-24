@@ -336,7 +336,6 @@ def main():
         now = time.time()
         for last in windows:
             last["window"].activate()
-            time.sleep(10)
             if now - last["login"] > addRandomness(t['check_for_login'] * 120):
                 sys.stdout.flush()
                 last["login"] = now
@@ -350,7 +349,7 @@ def main():
                         loggerMapClicked();
                 if last in windows:
                     last["window"].activate()
-                    time.sleep(10)
+                    time.sleep(5)
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
