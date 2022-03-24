@@ -340,15 +340,19 @@ def main():
                 sys.stdout.flush()
                 last["login"] = now
                 login()
+                time.sleep(10)
                 if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 120):
                     last["heroes"] = now
                     refreshHeroes()
+                    time.sleep(10)
                 if now - last["new_map"] > t['check_for_new_map_button']:
                     last["new_map"] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked();
+                        time.sleep(10)
                 if last in windows:
                     last["window"].activate()
+                    time.sleep(10)
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
