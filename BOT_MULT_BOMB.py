@@ -318,7 +318,6 @@ def refreshHeroes():
         if buttonsClicked == 0:
             empty_scrolls_attempts = empty_scrolls_attempts - 1
         scroll()
-        time.sleep(10)
     logger('{} HEROIS PARA O TRABALHO ...'.format(hero_clicks))
     goToGame()
 
