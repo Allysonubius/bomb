@@ -11,7 +11,7 @@
 
     # Intervalo de tempo para verificar por novos mapas
     # Valor padrão (em segundos): 5
-    check_for_new_map_button: 1
+    check_for_new_map_button: 5
 
     # Intervalo de tempo para verificar se existe solicitação de login
     # Valor padrão (em minutos): 5
