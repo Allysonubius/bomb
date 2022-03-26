@@ -98,8 +98,8 @@ slider = cv2.imread('targets/slider.png')
 def show(rectangles, img = None):
     if img is None:
         with mss.mss() as sct:
-            monitor = sct.monitors[0]
-            img = np.array(sct.grab(monitor))
+           monitor = sct.monitors[0]
+           img = np.array(sct.grab(monitor))
     for (x, y, w, h) in rectangles:
         cv2.rectangle(img, (x, y), (x + w, y + h), (255,255,255,255), 2)
     cv2.imshow('img',img)
@@ -191,18 +191,15 @@ def isWorking(bar, buttons):
     return True
 
 def clickGreenBarButtons():
-    offset = 130
+    offset = 150
     green_bars = positions(images['green-bar'], threshold=ct['green_bar'])
-    logger('%d BARRA VERDE DETECTADA' % len(green_bars))
     buttons = positions(images['go-work'], threshold=ct['go_to_work_btn'])
-    logger('%d BOTÂO ENCONTRADO' % len(buttons))
     not_working_green_bars = []
     for bar in green_bars:
         if not isWorking(bar, buttons):
             not_working_green_bars.append(bar)
     if len(not_working_green_bars) > 0:
-        logger(' %d ENCONTRADO HEROIS COM ESTAMINA VERDE' % len(not_working_green_bars))
-        logger('ENCONTRADO %d HEROIS' % len(not_working_green_bars))
+        logger('ENCONTRADO HEROIS COM ESTAMINA GREEN')
     for (x, y, w, h) in not_working_green_bars:
         moveToWithRandomness(x+offset+(w/2),y+(h/2),1)
         pyautogui.click()
@@ -213,7 +210,7 @@ def clickGreenBarButtons():
     return len(not_working_green_bars)
 
 def clickFullBarButtons():
-    offset = 100
+    offset = 150
     full_bars = positions(images['full-stamina'], threshold=ct['default'])
     buttons = positions(images['go-work'], threshold=ct['go_to_work_btn'])
     not_working_full_bars = []
@@ -221,7 +218,7 @@ def clickFullBarButtons():
         if not isWorking(bar, buttons):
             not_working_full_bars.append(bar)
     if len(not_working_full_bars) > 0:
-        logger('ENCONTRADO %d HEROIS' % len(not_working_full_bars))
+        logger('ENCONTRADO HEROIS COM ESTAMINA FULL')
     for (x, y, w, h) in not_working_full_bars:
         moveToWithRandomness(x+offset+(w/2),y+(h/2),1)
         pyautogui.click()
@@ -233,36 +230,34 @@ def goToHeroes():
     if clickBtn(images['go-back-arrow']):
         global login_attempts
         login_attempts = 0
-    time.sleep(1)
     clickBtn(images['hero-icon'])
-    time.sleep(1)
 
 def goToGame():
     logger('ENVIANDO PARA O MAPA ...')
     clickBtn(images['x'])
-    time.sleep(10)
     clickBtn(images['treasure-hunt-icon'])
 
 def refreshHeroesPositions():
     logger('REINCIANDO POSIÇÔES DO HEROIS')
     clickBtn(images['go-back-arrow'])
-    time.sleep(10)
     clickBtn(images['treasure-hunt-icon'])
 
 def login():
     global login_attempts
     logger('VERIFICANDO SE A CONTA SE ENCONTRA DESCONECTADA ...')
-    if clickBtn(images['connect-wallet'], name='connectWalletBtn', timeout = 10):
+    if clickBtn(images['connect-wallet'], name='connectWalletBtn', timeout = 5):
         logger('BOTÂO DA CARTEIRA ENCONTRADO, REALIANDO LOGIN ...')
         login_attempts = login_attempts + 1
         if login_attempts > 3:
             login_attempts = 0
             pyautogui.hotkey('ctrl','f5')
             logger('REFRESH PAGE ...')
-    if clickBtn(images['connect-login-bomb'], timeout = 10):
+            timeout(10)
+            login()
+    if clickBtn(images['connect-login-bomb'], timeout = 5):
         login_attempts = login_attempts + 1
         logger('CONECTANDO ...')
-        if clickBtn(images['treasure-hunt-icon'], name='teasureHunt', timeout=25):
+        if clickBtn(images['treasure-hunt-icon'], name='teasureHunt', timeout=5):
             login_attempts = 0
             logger('INICIANDO MAPA ...')
     if clickBtn(images['ok'], name='okBtn', timeout=5):
@@ -300,8 +295,8 @@ def refreshHeroes():
     logger('PROCURANDO HEROIS PARA REALIZAR O TRABALHO ...')
     goToHeroes()
     if c['select_heroes_mode'] == "full":
-        logger('ENVIANDO HEROIS PARA TRABALHAR COM ESTAMINA CHEIA ...', 'green')
-    elif c['select_heroes_mode'] == "green":
+        logger('ENVIANDO HEROIS PARA TRABALHAR COM ESTAMINA CHEIA ...', 'full')
+    if c['select_heroes_mode'] == "green":
         logger('ENVIANDO HEROIS PARA TRABALHAR COM ESTAMINA VERDE ...', 'green')
     else:
         logger('ENVIANDO TODOS OS HEROIS PARA O TRABALHO ...', 'green')
@@ -310,19 +305,24 @@ def refreshHeroes():
     while(empty_scrolls_attempts >0):
         if c['select_heroes_mode'] == 'full':
             buttonsClicked = clickFullBarButtons()
-        elif c['select_heroes_mode'] == 'green':
+            if buttonsClicked == 0:
+                empty_scrolls_attempts = empty_scrolls_attempts - 1
+                scroll()
+        if c['select_heroes_mode'] == 'green':
             buttonsClicked = clickGreenBarButtons()
+            if buttonsClicked == 0:
+                empty_scrolls_attempts = empty_scrolls_attempts - 1
+                scroll()
         else:
             buttonsClicked = clickButtons()
+            if buttonsClicked == 0:
+                empty_scrolls_attempts = empty_scrolls_attempts - 1
+                scroll()
         sendHeroesHome()
-        if buttonsClicked == 0:
-            empty_scrolls_attempts = empty_scrolls_attempts - 1
-        scroll()
-    logger('{} HEROIS PARA O TRABALHO ...'.format(hero_clicks))
     goToGame()
 
 def main():
-    time.sleep(10)
+    time.sleep(5)
     t = c['time_intervals']
     windows = []
     for w in pygetwindow.getWindowsWithTitle('bombcrypto'):
@@ -344,15 +344,14 @@ def main():
                 if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
                     last["heroes"] = now
                     refreshHeroes()
+                    timeout(10)
                 if now - last["new_map"] > t['check_for_new_map_button']:
                     last["new_map"] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked();
                 if last in windows:
                     last["window"].activate()
-            else:
-                pyautogui.hotkey('ctrl','f5')
-                logger('REFRESH PAGE ...')
+                    timeout(10)
             logger(None, progress_indicator=True)
             sys.stdout.flush()
             time.sleep(1)
