@@ -16,7 +16,7 @@ import yaml
 cat = """ INICIANDO FARM MULTI ACCOUNT  ... """
 
 print('\n',cat,'\n')
-time.sleep(2)
+timeout(2)
 
 if __name__ == '__main__':
     stream = open("config.yaml", 'r')
@@ -160,6 +160,7 @@ def scroll():
         pyautogui.scroll(-c['scroll_size'])
     else:
         pyautogui.dragRel(0,-c['click_and_drag_amount'],duration=1, button='left')
+    timeout(2)
 
 def clickButtons():
     buttons = positions(images['go-work'], threshold=ct['go_to_work_btn'])
@@ -200,6 +201,7 @@ def clickGreenBarButtons():
             not_working_green_bars.append(bar)
     if len(not_working_green_bars) > 0:
         logger('ENCONTRADO HEROIS COM ESTAMINA GREEN')
+        pass
     for (x, y, w, h) in not_working_green_bars:
         moveToWithRandomness(x+offset+(w/2),y+(h/2),1)
         pyautogui.click()
@@ -217,9 +219,11 @@ def clickFullBarButtons():
     for bar in full_bars:
         if not isWorking(bar, buttons):
             not_working_full_bars.append(bar)
+            pass
     if len(not_working_full_bars) > 0:
         logger('ENCONTRADO HEROIS COM ESTAMINA FULL')
     for (x, y, w, h) in not_working_full_bars:
+        pass
         moveToWithRandomness(x+offset+(w/2),y+(h/2),1)
         pyautogui.click()
         global hero_clicks
@@ -230,12 +234,16 @@ def goToHeroes():
     if clickBtn(images['go-back-arrow']):
         global login_attempts
         login_attempts = 0
+        pass
     clickBtn(images['hero-icon'])
 
 def goToGame():
     logger('ENVIANDO PARA O MAPA ...')
     clickBtn(images['x'])
+    clickBtn(images['x'])
+    timeout(2)
     clickBtn(images['treasure-hunt-icon'])
+    timeout(30)
 
 def refreshHeroesPositions():
     logger('REINCIANDO POSIÇÔES DO HEROIS')
@@ -252,14 +260,15 @@ def login():
             login_attempts = 0
             pyautogui.hotkey('ctrl','f5')
             logger('REFRESH PAGE ...')
-            timeout(10)
+            timeout(5)
             login()
+            pass
     if clickBtn(images['connect-login-bomb'], timeout = 5):
         login_attempts = login_attempts + 1
+        timeout(2)
         logger('CONECTANDO ...')
-        if clickBtn(images['treasure-hunt-icon'], name='teasureHunt', timeout=5):
-            login_attempts = 0
-            logger('INICIANDO MAPA ...')
+        timeout(2)
+        pass
     if clickBtn(images['ok'], name='okBtn', timeout=5):
         pass
 
@@ -286,6 +295,7 @@ def sendHeroesHome():
                 print ('hero not working, sending him home')
                 moveToWithRandomness(go_home_buttons[0][0]+go_home_buttons[0][2]/2,position[1]+position[3]/2,1)
                 pyautogui.click()
+                pass
             else:
                 print ('hero working, not sending him home(no dark work button)')
         else:
@@ -296,8 +306,10 @@ def refreshHeroes():
     goToHeroes()
     if c['select_heroes_mode'] == "full":
         logger('ENVIANDO HEROIS PARA TRABALHAR COM ESTAMINA CHEIA ...', 'full')
+        pass
     if c['select_heroes_mode'] == "green":
         logger('ENVIANDO HEROIS PARA TRABALHAR COM ESTAMINA VERDE ...', 'green')
+        pass
     else:
         logger('ENVIANDO TODOS OS HEROIS PARA O TRABALHO ...', 'green')
     buttonsClicked = 1
@@ -308,21 +320,24 @@ def refreshHeroes():
             if buttonsClicked == 0:
                 empty_scrolls_attempts = empty_scrolls_attempts - 1
                 scroll()
+                pass
         if c['select_heroes_mode'] == 'green':
             buttonsClicked = clickGreenBarButtons()
             if buttonsClicked == 0:
                 empty_scrolls_attempts = empty_scrolls_attempts - 1
                 scroll()
+                pass
         else:
             buttonsClicked = clickButtons()
             if buttonsClicked == 0:
                 empty_scrolls_attempts = empty_scrolls_attempts - 1
                 scroll()
+                pass
         sendHeroesHome()
     goToGame()
 
 def main():
-    time.sleep(5)
+    timeout(5)
     t = c['time_intervals']
     windows = []
     for w in pygetwindow.getWindowsWithTitle('bombcrypto'):
@@ -337,22 +352,26 @@ def main():
         now = time.time()
         for last in windows:
             last["window"].activate()
-            if now - last["login"] > addRandomness(t['check_for_login'] * 60):
+            if now + last["login"] > addRandomness(t['check_for_login'] * 120):
                 sys.stdout.flush()
                 last["login"] = now
                 login()
-                if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
+                pass
+                if now + last["heroes"] > addRandomness(t['send_heroes_for_work'] * 120):
                     last["heroes"] = now
                     refreshHeroes()
                     timeout(10)
-                if now - last["new_map"] > t['check_for_new_map_button']:
+                    pass
+                if now + last["new_map"] > t['check_for_new_map_button']:
                     last["new_map"] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked();
+                        pass
                 if last in windows:
                     last["window"].activate()
-                    timeout(10)
+                    timeout(60)
+                    pass
             logger(None, progress_indicator=True)
             sys.stdout.flush()
-            time.sleep(1)
+            timeout(2)
 main()

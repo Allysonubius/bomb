@@ -3,19 +3,19 @@
   time_intervals:
     # Intervalo de tempo para verificar se há heróis disponíveis para trabalhar
     # Valor padrão (em minutos): 10
-    send_heroes_for_work: 5
+    send_heroes_for_work: 10
     
     # Intervalo de tempo para atualizar a posição dos heróis no mapa
     # Valor padrão (em minutos): 3
-    refresh_heroes_positions: 5
+    refresh_heroes_positions: 10
 
     # Intervalo de tempo para verificar por novos mapas
     # Valor padrão (em segundos): 5
-    check_for_new_map_button: 1
+    check_for_new_map_button: 5
 
     # Intervalo de tempo para verificar se existe solicitação de login
     # Valor padrão (em minutos): 5
-    check_for_login: 1
+    check_for_login: 5
 
     # Intervalo de tempo entre movimentos
     # Valor padrão (em segundos): 1
@@ -47,7 +47,7 @@
     home_button_threshold: 0.9
 
   # Valor padrão: 60
-  scroll_size: 30
+  scroll_size: 35
 
   # Valor padrão: 3
   scroll_attemps: 4
