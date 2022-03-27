@@ -259,6 +259,7 @@ def login():
             login_attempts = 0
             pyautogui.hotkey('ctrl','f5')
             logger('REFRESH PAGE ...')
+            login()
     if clickBtn(images['connect-login-bomb'], timeout = 10):
         login_attempts = login_attempts + 1
         logger('CONECTANDO ...')
