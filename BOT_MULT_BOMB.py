@@ -351,7 +351,7 @@ def main():
         now = time.time()
         for last in windows:
             last['window'].activate()
-            if now + last['login'] > addRandomness(t['check_for_login'] * 120):
+            if now - last['login'] > addRandomness(t['check_for_login'] * 120):
                 sys.stdout.flush()
                 last["login"] = now
                 login()
@@ -359,12 +359,12 @@ def main():
                 goToGame()
                 timeout(20)
                 pass
-                if now + last['new_map'] > t['check_for_new_map_button']:
+                if now - last['new_map'] > t['check_for_new_map_button']:
                     last['new_map'] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked();
                         pass
-                if now + last['heroes'] > addRandomness(t['send_heroes_for_work'] * 120):
+                if now - last['heroes'] > addRandomness(t['send_heroes_for_work'] * 120):
                     timeout(10)
                     last['heroes'] = now 
                     refreshHeroes()
