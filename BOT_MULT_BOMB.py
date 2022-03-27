@@ -200,7 +200,7 @@ def clickGreenBarButtons():
         if not isWorking(bar, buttons):
             not_working_green_bars.append(bar)
     if len(not_working_green_bars) > 0:
-        logger('ENCONTRADO HEROIS COM ESTAMINA GREEN')
+        logger('ENCONTRADO HEROIS COM ESTAMINA VERDE')
         pass
     for (x, y, w, h) in not_working_green_bars:
         moveToWithRandomness(x+offset+(w/2),y+(h/2),1)
@@ -241,9 +241,8 @@ def goToGame():
     logger('ENVIANDO PARA O MAPA ...')
     clickBtn(images['x'])
     clickBtn(images['x'])
-    timeout(2)
+    timeout(5)
     clickBtn(images['treasure-hunt-icon'])
-    timeout(30)
 
 def refreshHeroesPositions():
     logger('REINCIANDO POSIÇÔES DO HEROIS')
@@ -267,7 +266,6 @@ def login():
         login_attempts = login_attempts + 1
         timeout(2)
         logger('CONECTANDO ...')
-        timeout(2)
         pass
     if clickBtn(images['ok'], name='okBtn', timeout=5):
         pass
@@ -337,7 +335,7 @@ def refreshHeroes():
     goToGame()
 
 def main():
-    timeout(5)
+    timeout(10)
     t = c['time_intervals']
     windows = []
     for w in pygetwindow.getWindowsWithTitle('bombcrypto'):
@@ -349,29 +347,33 @@ def main():
             "refresh_heroes" : 0
             })
     while True:
+        timeout(10)
         now = time.time()
         for last in windows:
-            last["window"].activate()
-            if now + last["login"] > addRandomness(t['check_for_login'] * 120):
+            last['window'].activate()
+            if now + last['login'] > addRandomness(t['check_for_login'] * 120):
                 sys.stdout.flush()
                 last["login"] = now
                 login()
+                timeout(5)
+                goToGame()
+                timeout(20)
                 pass
-                if now + last["heroes"] > addRandomness(t['send_heroes_for_work'] * 120):
-                    last["heroes"] = now
-                    refreshHeroes()
-                    timeout(10)
-                    pass
-                if now + last["new_map"] > t['check_for_new_map_button']:
-                    last["new_map"] = now
+                if now + last['new_map'] > t['check_for_new_map_button']:
+                    last['new_map'] = now
                     if clickBtn(images['new-map']):
                         loggerMapClicked();
                         pass
+                if now + last['heroes'] > addRandomness(t['send_heroes_for_work'] * 120):
+                    timeout(10)
+                    last['heroes'] = now 
+                    refreshHeroes()
+                    pass
                 if last in windows:
-                    last["window"].activate()
-                    timeout(60)
+                    timeout(10)
+                    last['window'].activate()
                     pass
             logger(None, progress_indicator=True)
             sys.stdout.flush()
-            timeout(2)
+            timeout(5)
 main()
